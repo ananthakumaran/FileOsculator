@@ -1,3 +1,22 @@
+/**
+ *     Copyright fileosculator (C) 2009 Anantha Kumaran
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *     contacts <ananthakumaran@gmail.com>
+ */
+
 package com.fileosculator.client;
 
 import com.fileosculator.message.Message;
@@ -9,12 +28,12 @@ import com.trolltech.qt.QThread;
 import com.trolltech.qt.QtJambiObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 /**
  *
@@ -39,13 +58,14 @@ public class ClientTest extends QtJambiObject
     {
     }
 
-    @Before
+    @BeforeTest
     public void setUp()
     {
         Server.init();
+        PeerList.getPeers().clear();
     }
 
-    @After
+    @AfterTest
     public void tearDown()
     {
         Server.getInstance().close();
@@ -54,7 +74,7 @@ public class ClientTest extends QtJambiObject
     /**
      * Test of run method, of class Client.
      */
-    @Test
+    @Test(invocationCount = 10)
     public void testSendingUserInfoMessage()
     {
         try
@@ -64,9 +84,8 @@ public class ClientTest extends QtJambiObject
             client = new QThread(new Client(m));
             client.start();
             client.join();
-       //     assertEquals("There should be one user present in the peer list ", 1, PeerList.getPeers().size());
 
-            // TODO review the generated test code and remove the default call to fail.
+            assertEquals(PeerList.getPeers().size(), 1, "There should be one user in the list");
         } catch (Exception ex)
         {
             Logger.getLogger(ClientTest.class.getName()).log(Level.SEVERE, null, ex);

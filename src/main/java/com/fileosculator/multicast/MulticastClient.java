@@ -53,6 +53,7 @@ public class MulticastClient implements Runnable
             DatagramPacket packet = new DatagramPacket("hello".getBytes(), 5, group, Const.MULTICAST_TEMP);
             socket.send(packet);
 
+            System.out.println("multicast message send");
 
         } catch (IOException ex)
         {

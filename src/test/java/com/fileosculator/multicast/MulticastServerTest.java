@@ -1,3 +1,22 @@
+/**
+ *     Copyright fileosculator (C) 2009 Anantha Kumaran
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *     contacts <ananthakumaran@gmail.com>
+ */
+
 package com.fileosculator.multicast;
 
 import com.fileosculator.model.User;
@@ -7,12 +26,12 @@ import com.trolltech.qt.QThread;
 import com.trolltech.qt.QtJambiObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  *
@@ -37,59 +56,43 @@ public class MulticastServerTest extends QtJambiObject
     {
     }
 
-    @Before
+    @BeforeTest
     public void setUp()
     {
+        Server.init();
     }
 
-    @After
+    @AfterTest
     public void tearDown()
     {
+        Server.getInstance().close();
     }
 
     /**
      * Test of run method, of class MulticastServer.
      */
-    @Test
+    @Test(invocationCount = 10)
     public void testRun()
     {
         try
         {
-            PeerList.get().userAdded.connect(this,"userAdded(User)");
             System.out.println("run");
+
             MulticastServer.getInstance();
-            Server.init();
             // send a message to the multicast server
             QThread client = new QThread(new MulticastClient());
+
             client.start();
             client.join();
 
-            // now the multicast server should send a info request to
-            // the server and the should add a user to the peer list
-
-
-            
-
-
-        
-
-            System.out.println("getting details");
-        //    assertEquals("There should be one user present in the peer list ", 1, PeerList.getPeers().size());
-            
+            MulticastServer.getInstance().close();
+            assertEquals(PeerList.getPeers().size(), 1, "There should be one user present in the peer list ");
 
         } catch (InterruptedException ex)
         {
             fail("exception  ");
             Logger.getLogger(MulticastServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
-    }
-
-    public void userAdded(User user)
-    {
-        System.out.println("user added test suite");
-        this.user = user;
     }
 
     /**
@@ -104,8 +107,10 @@ public class MulticastServerTest extends QtJambiObject
     /**
      * Test of getInstance method, of class MulticastServer.
      */
-
-    @Test
+    @Test(expectedExceptions =
+    {
+        IllegalThreadStateException.class
+    })
     public void testGetInstance()
     {
         System.out.println("getInstance");
@@ -113,13 +118,7 @@ public class MulticastServerTest extends QtJambiObject
         assertNotNull(MulticastServer.getInstance());
         assertNotNull(MulticastServer.getMulticastServerThread());
 
-        try
-        {
-            MulticastServer.getMulticastServerThread().start();
-            fail("The thread is not yet started");
-        } catch (IllegalThreadStateException ex)
-        {
-        }
-
+        // should throw illegalThreadstateException
+        MulticastServer.getMulticastServerThread().start();
     }
 }

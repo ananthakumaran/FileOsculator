@@ -34,6 +34,7 @@ import java.util.Properties;
  */
 public class App
 {
+
     /** Main window of the application */
     private static MainWindow mainWindow;
 
@@ -85,10 +86,10 @@ public class App
      */
     private static void initServers()
     {
-        // initiate the multicast server
-        MulticastServer.getInstance();
         // intiate sthe server
         Server.init();
+        // initiate the multicast server
+        MulticastServer.getInstance();
         // initiate the multicast client
         new QThread(new MulticastClient()).start();
         // start the multicast demon

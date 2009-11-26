@@ -106,7 +106,10 @@ public class Client implements Runnable
         {
             try
             {
-                clientSocket.close();
+                if (clientSocket != null && !clientSocket.isClosed())
+                {
+                    clientSocket.close();
+                }
             } catch (IOException ex)
             {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);

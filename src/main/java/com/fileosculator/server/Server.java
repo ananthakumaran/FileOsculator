@@ -63,6 +63,7 @@ public class Server implements Runnable
     {
         try
         {
+            System.out.println("waiting for messages");
             serverSocket = new ServerSocket(Const.SERVER);
             while (!finished)
             {
@@ -108,15 +109,16 @@ public class Server implements Runnable
                         receivedMessage.setReceiver(receivedMessage.getUser());
                         new QThread(new Client(receivedMessage)).start();
                         break;
-
                     case FOLDER_REQUEST:
                         receivedMessage.setMessageType(MessageType.FOLDER);
                         receivedMessage.setReceiver(receivedMessage.getUser());
                         new QThread(new Client(receivedMessage)).start();
                         break;
-
                 }
             }
+
+            serverSocket.close();
+            System.out.println("server  socket closed");
 
         } catch (ClassNotFoundException ex)
         {
@@ -162,8 +164,20 @@ public class Server implements Runnable
         try
         {
             finished = true;
-            serverSocket.close();
-        } catch (IOException ex)
+
+            System.out.println("trying to close server ");
+            Message message = new Message(MessageType.USER_INFO);
+            message.setReceiver(CurrentUser.getUserInstance());
+            QThread finishThread = new QThread(new Client(message));
+            finishThread.start();
+            finishThread.join();
+
+            getServerThread().join(100);
+
+            System.out.println("server thread closed");
+
+
+        } catch (InterruptedException ex)
         {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -175,5 +189,10 @@ public class Server implements Runnable
     public static Server getInstance()
     {
         return server;
+    }
+
+    public static QThread getServerThread()
+    {
+        return serverThread;
     }
 }

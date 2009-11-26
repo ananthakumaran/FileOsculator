@@ -35,9 +35,9 @@ public class PeerList extends QSignalEmitter
     /** List of the peers current in the network */
     private static Set<User> peerList = new HashSet();
     /** signals when a new user joined  the network */
-    public  Signal1<User> userAdded;
+    public Signal1<User> userAdded;
     /** signals whena a user unjoined the network */
-    public  Signal1<User> userRemoved;
+    public Signal1<User> userRemoved;
     /** singleton */
     private static PeerList peer;
 
@@ -89,7 +89,7 @@ public class PeerList extends QSignalEmitter
 
         synchronized (this)
         {
-            removed = peerList.add(user);
+            removed = peerList.remove(user);
         }
         if (removed)
         {

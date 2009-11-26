@@ -87,7 +87,10 @@ public class MulticastServer implements Runnable
                 client.start();
                 try
                 {
-                    client.join(100);
+                    System.out.println("waiting for client to finish");
+                    client.join();
+
+                    System.out.println("client finished");
                 } catch (InterruptedException ex)
                 {
                     Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
