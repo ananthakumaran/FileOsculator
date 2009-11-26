@@ -1,0 +1,316 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- Project Information -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>fileosculator</name>
+    <url>http://fileosculator.kenai.com</url>
+    <licenses>
+        <license>
+            <name>GPL</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+            <distribution>repo</distribution>
+            <comments>v3 or higher</comments>
+        </license>
+    </licenses>
+    <inceptionYear>2009</inceptionYear>
+    <developers>
+        <developer>
+            <id>ananth</id>
+            <name>Anantha Kumaran</name>
+            <email>ananthakumaran@gmail.com</email>
+            <url>http://ananthakumaran.wordpress.com</url>
+            <timezone>(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</timezone>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+	<!-- POM Relationships -->
+    <groupId>com.fileosculator</groupId>
+    <artifactId>fileosculator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+	<!-- DEPENDENCIES -->
+    <dependencies>
+		<!-- Qt Jambi Dependency -->
+        <dependency>
+            <groupId>com.trolltech.qtjambiclasses</groupId>
+            <artifactId>qtjambi</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+		<!-- Qt libray  Dependency (windows)-->
+        <dependency>
+            <groupId>com.trolltech.qtjambiwin32gpl</groupId>
+            <artifactId>qtjambi</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+
+		<!-- Test Dependency -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+	<!-- Build Settings -->
+    <packaging>jar</packaging>
+    <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+			<!-- Used to run the application
+
+                        user profiles while testing
+
+                        -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>${fileosculator.mainclass}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+			<!-- create a single jar with dependency -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+				implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>${fileosculator.mainclass}</Main-Class>
+                                        <Build-Number>1</Build-Number>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+			<!-- package -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${fileosculator.mainclass}</mainClass>
+                            <packageName>${fileosculator.mainpackage}</packageName>
+                            <addClasspath>true</addClasspath>
+                            <addExtensions />
+                            <classpathPrefix />
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+			<!-- Eclipse plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                </configuration>
+            </plugin>
+
+            <!-- JUI plugin used to convert the jui files to java files -->
+            <plugin>
+                <groupId>pl.swmud.ns.qtjambi</groupId>
+                <artifactId>juic-mvn-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>juic</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <juicPath>E:/Program Files/qtjambi-win32-lgpl-4.5.2_01/bin/juic</juicPath>
+                            <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+                            <outputDirectory>${basedir}/src/main/java/</outputDirectory>
+                            <packageName>com.fileosculator.ui.generated</packageName>
+                            <all>true</all>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- license header plugin -->
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>src/etc/License.txt</header>
+                    <excludes>
+                        <exclude>src/main/java/com/fileosculator/ui/generated/**</exclude>
+                        <exclude>src/main/java/com/fileosculator/ui/jui/**</exclude>
+                    </excludes>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <email>ananthakumaran@gmail.com</email>
+                        <author>Anantha Kumaran</author>
+                        <project.name>${project.name}</project.name>
+                    </properties>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+    <properties>
+        <fileosculator.mainclass>com.fileosculator.App</fileosculator.mainclass>
+        <fileosculator.mainpackage>com.fileosculator</fileosculator.mainpackage>
+    </properties>
+
+    <!-- Profiles
+
+       used to run two client on a single machine during development
+
+    -->
+
+    <profiles>
+        <!-- Profile for running first client -->
+        <profile>
+            <id>p1</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Dserver=6666</argument>
+                                <argument>-Dms=4441</argument>
+                                <argument>-Dmc=4442</argument>
+                                <argument>-Dmt=4443</argument>
+                                <argument>-Dst=6667</argument>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>${fileosculator.mainclass}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Profile for running second client -->
+        <profile>
+            <id>p2</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Dserver=6667</argument>
+                                <argument>-Dms=4443</argument>
+                                <argument>-Dmc=4444</argument>
+                                <argument>-Dmt=4441</argument>
+                                <argument>-Dst=6666</argument>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>${fileosculator.mainclass}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+<!--
+Add repository for the juic-mvn-plugin
+
+<repositories>
+    <repository>
+        <id>juic-mvn-plugin</id>
+        <url>http://swmud.pl/maven2/</url>
+        <url>https://sourceforge.net/projects/juic-mvn-plugin/files/</url>
+    </repository>
+</repositories>
+
+-->
+    <pluginRepositories>
+        <!-- License adder plugin repository -->
+        <pluginRepository>
+            <id>mc-release</id>
+            <name>Local Maven repository of releases</name>
+            <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+</project>
