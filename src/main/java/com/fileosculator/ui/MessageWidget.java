@@ -14,8 +14,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *     contacts <ananthakumaran@gmail.com>
+ *     contacts <ananthakumaran[at]gmail.com>
  */
+
 package com.fileosculator.ui;
 
 import com.fileosculator.message.Message;
@@ -27,6 +28,7 @@ import com.trolltech.qt.core.QRect;
 import com.trolltech.qt.core.QTimer;
 import com.trolltech.qt.core.Qt;
 import com.trolltech.qt.core.Qt.WindowType;
+import com.trolltech.qt.gui.QApplication;
 
 /**
  *
@@ -71,6 +73,8 @@ public class MessageWidget extends FrameLessWidget
         setGeometry(rect);
         show();
 
+       // alert the user with a beep sound
+       QApplication.beep();
     }
 
     public void setText()

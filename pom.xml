@@ -21,7 +21,7 @@
         <developer>
             <id>ananth</id>
             <name>Anantha Kumaran</name>
-            <email>ananthakumaran@gmail.com</email>
+            <email>ananthakumaran[at]gmail.com</email>
             <url>http://ananthakumaran.wordpress.com</url>
             <timezone>(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</timezone>
             <roles>
@@ -198,7 +198,7 @@
                     </excludes>
                     <properties>
                         <year>${project.inceptionYear}</year>
-                        <email>ananthakumaran@gmail.com</email>
+                        <email>ananthakumaran[at]gmail.com</email>
                         <author>Anantha Kumaran</author>
                         <project.name>${project.name}</project.name>
                     </properties>
@@ -313,6 +313,4 @@ Add repository for the juic-mvn-plugin
             </releases>
         </pluginRepository>
     </pluginRepositories>
-
-
 </project>
